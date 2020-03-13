@@ -1,2 +1,1 @@
-import { VERSION } from '../src/index.js'
-console.log(VERSION)
+import '../src/index.js'
