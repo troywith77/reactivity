@@ -19,12 +19,16 @@ let quantity = 2
 let total = 0
 let target = null
 
-target = () => {
-  total = price * quantity
+function watcher(func) {
+  target = func
+  dep.depend()
+  target()
+  target = null
 }
 
-dep.depend()
-target()
+watcher(() => {
+  total = price * quantity
+})
 
 price = 20
 console.log(total)
