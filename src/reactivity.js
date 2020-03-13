@@ -1,9 +1,10 @@
 class Dep {
+  static target = null
   subscribers = []
 
   depend() {
-    if (target && !this.subscribers.includes(target)) {
-      this.subscribers.push(target)
+    if (Dep.target && !this.subscribers.includes(Dep.target)) {
+      this.subscribers.push(Dep.target)
     }
   }
 
@@ -12,25 +13,44 @@ class Dep {
   }
 }
 
+function defineReactive(obj) {
+  Object.keys(obj).forEach(key => {
+    let value = obj[key]
+    Object.defineProperty(obj, key, {
+      get() {
+        dep.depend()
+        return value
+      },
+      set(newVal) {
+        value = newVal
+        dep.notify()
+      },
+    })
+  })
+}
+
 const dep = new Dep()
 
-let price = 5
-let quantity = 2
+let data = {
+  price: 5,
+  quantity: 2,
+}
 let total = 0
-let target = null
+
+defineReactive(data)
 
 function watcher(func) {
-  target = func
-  dep.depend()
-  target()
-  target = null
+  Dep.target = func
+  Dep.target()
+  Dep.target = null
 }
 
 watcher(() => {
-  total = price * quantity
+  total = data.price * data.quantity
 })
 
-price = 20
 console.log(total)
-dep.notify()
+data.price = 20
+console.log(total)
+data.quantity = 10
 console.log(total)
