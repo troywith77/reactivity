@@ -1,25 +1,32 @@
+class Dep {
+  subscribers = []
+
+  depend() {
+    if (target && !this.subscribers.includes(target)) {
+      this.subscribers.push(target)
+    }
+  }
+
+  notify() {
+    this.subscribers.forEach(sub => sub())
+  }
+}
+
+const dep = new Dep()
+
 let price = 5
 let quantity = 2
 let total = 0
 let target = null
-let storage = []
-
-function record() {
-  storage.push(target)
-}
-
-function replay() {
-  storage.forEach(run => run())
-}
 
 target = () => {
   total = price * quantity
 }
 
-record()
+dep.depend()
 target()
 
 price = 20
 console.log(total)
-replay()
+dep.notify()
 console.log(total)
